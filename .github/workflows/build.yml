@@ -1,0 +1,35 @@
+name: workflow investigation
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to run tests against'
+        required: true
+        default: 'nxt'
+        options:
+          - prod
+          - drk
+          - nxt
+          - getdev
+        type: choice
+      tags:
+        description: 'Tags to filter tests'
+        required: false
+        default: ''
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Running tests in environment: ${{ github.event.inputs.environment }}" >> file.txt
+          echo "Tags to filter tests: ${{ github.event.inputs.tags }}" >> file.txt
+        shell: bash
+
+      - name: archive file
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidence
+          path: file.txt
+          retention-days: 1
